@@ -88,8 +88,10 @@ T Vector<T>::remove(Rank lo, Rank hi)
 	_size = _size - (hi - lo);					//先减少规模标识，以免在完成覆盖后做无用的运算	
 	for (int i = lo; i < _size; i++)
 		_elem[i] = _elem[i + hi - lo];			//使用后继元素对被移除元素进行覆盖
+	/*
 	if (_size < (_capacity / 2))
 		shrink();								//缩减完后，如果容量过大则进行缩减
+		*/
 	return eBak;
 }
 /*===========================================

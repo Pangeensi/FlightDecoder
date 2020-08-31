@@ -28,9 +28,5 @@ void fileLoad(unsigned char* buffer, const char* filePath, int fileSize)
 	std::ifstream file;
 	file.open(filePath, std::ifstream::binary);
 	file.read(reinterpret_cast<char*>(buffer), sizeof(unsigned char) * fileSize);
-	for (int i = 0; i < fileSize; i++)
-	{
-		std::cout << std::hex << short(buffer[i]) << " ";
-	}
 	file.close();
 }

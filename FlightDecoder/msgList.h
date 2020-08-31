@@ -2,25 +2,31 @@
 #ifndef _MSG_LIST_H_
 #define _MSG_LIST_H_
 #include "msgListNode.h"
+typedef int Rank;
 template <typename T>
 class msgList
 {
 private:
-	Posi(T) header;					//头元素和尾元素
-	Posi(T) trailer;
-	int _size;						//列表的规模
+
 protected:
 	void initialize(void);			//一般列表初始化函数
 public:
+	Posi(T) header;					//头元素和尾元素
+	Posi(T) trailer;
+	int _size;						//列表的规模
 	msgList() { initialize(); }		//列表构造函数
 	~msgList()						//列表析构函数
 	{
+		/*
 		for (int i = 0; i < _size; i++)
 		{
 			Posi(T) del = header->succ;
 			header->succ = header->succ->succ;
-			delete[] del;
+			delete del;
 		}
+		*/
+		while (0 < _size)
+			remove(header->succ);
 		delete[] header;
 		delete[] trailer;
 	}
@@ -29,6 +35,8 @@ public:
 	Posi(T) firstNode(T const& e);					//获取列表首节点位置
 	bool empty(void);								//返回列表是否为空
 	Rank size(void);								//获取列表的规模
+	T remove(Posi(T));								//删除节点
+	int clear(void);								//清除所有节点
 };
 /*============================================
 
@@ -100,7 +108,7 @@ inline bool msgList<T>::empty(void)
 }
 /*===========================================
 
-获取向量的规模
+获取列表的规模
 返回值：当前栈当中存储的元素个数
 
 ============================================*/
@@ -108,5 +116,21 @@ template<typename T>
 inline Rank msgList<T>::size(void)
 {
 	return this->_size;
+}
+/*===========================================
+
+删除列表节点
+输入值：列表节点的位置
+返回值：被删除节点的节点元素
+============================================*/
+template <typename T>
+T msgList<T>::remove(Posi(T) p)
+{
+	T e = p->_elem;
+	p->pred->succ = p->succ;
+	p->succ->pred = p->pred;
+	delete p;
+	this->_size--;
+	return e;
 }
 #endif

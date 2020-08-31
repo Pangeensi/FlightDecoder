@@ -25,8 +25,10 @@ struct ListNode
 template <typename T>
 Posi(T) ListNode<T>::insertAsPred(T const& e)
 {
-	ListNode Node(e, this->pred, this);
-	return this->pred = &Node;
+	Posi(T) Node = new ListNode(e, this->pred, this);
+	this->pred->succ = Node;
+	this->pred = Node;
+	return Node;
 
 }
 /*============================================
@@ -39,7 +41,9 @@ Posi(T) ListNode<T>::insertAsPred(T const& e)
 template <typename T>
 Posi(T) ListNode<T>::insertAsSucc(T const& e)
 {
-	ListNode Node(e, this, this->succ);
-	return this->succ = &Node;
+	Posi(T) Node = new ListNode(e, this, this->succ);
+	this->succ->pred = Node;
+	this->succ = Node;
+	return Node;
 }
 #endif

@@ -139,9 +139,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FileLoader.cpp" />
     <ClCompile Include="FlightDecoder.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FileLoader.h" />
+    <ClInclude Include="HTTP.h" />
+    <ClInclude Include="Message.h" />
     <ClInclude Include="Stack.h" />
     <ClInclude Include="TCP.h" />
     <ClInclude Include="Vector.h" />

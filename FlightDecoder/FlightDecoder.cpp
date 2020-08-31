@@ -1,20 +1,26 @@
-﻿// FlightDecoder.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
+﻿// FlightDecode.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
 //
 
 #include <iostream>
-
+#include <fstream>
+#define DATA_SIZE 1000
 int main()
 {
-    std::cout << "Hello World!\n";
+    const char* fileName = "D:/FlightAwareData/Data_00001_20200810165511";      //ADS-B数据路径
+    std::ifstream file;
+    file.open(fileName, std::ifstream::binary);                                 //以二进制打开
+    file.seekg(0, std::ios_base::end);
+    int fileSize = file.tellg();                                                //获取文件大小
+    std::cout << fileSize << std::endl;
+    file.close();
+    file.open(fileName, std::ifstream::binary);                                 //读取文件大小会导致读取文件内容失败，所以重新打开
+    unsigned char* data = new unsigned char[fileSize];
+    file.read(reinterpret_cast<char*>(data), sizeof(unsigned char) * fileSize); //读取文件内容
+    for (int i = 0; i < fileSize; i++)
+    {
+        printf("%x ", data[i]);
+    }
+    file.close();
+    delete[] data;
+    return 0;
 }
-
-// 运行程序: Ctrl + F5 或调试 >“开始执行(不调试)”菜单
-// 调试程序: F5 或调试 >“开始调试”菜单
-
-// 入门使用技巧: 
-//   1. 使用解决方案资源管理器窗口添加/管理文件
-//   2. 使用团队资源管理器窗口连接到源代码管理
-//   3. 使用输出窗口查看生成输出和其他消息
-//   4. 使用错误列表窗口查看错误
-//   5. 转到“项目”>“添加新项”以创建新的代码文件，或转到“项目”>“添加现有项”以将现有代码文件添加到项目
-//   6. 将来，若要再次打开此项目，请转到“文件”>“打开”>“项目”并选择 .sln 文件

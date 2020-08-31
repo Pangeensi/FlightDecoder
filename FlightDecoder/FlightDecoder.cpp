@@ -5,6 +5,8 @@
 #include "FileLoader.h"
 #include "Stack.h"
 #include "Message.h"
+#include "msgList.h"
+#define DEFAULT_MESSAGE 10
 typedef unsigned char uchar;
 int main()
 {
@@ -24,12 +26,35 @@ int main()
     }
     dataStack.reverse();
     dataStackPtr = &dataStack;                  //指定数据指针
+    /*
     Message msg1 = Message();
     while (!msg1.HTTPClassify(dataStackPtr) && !dataStack.empty());
     while (!msg1.dataClassify(dataStackPtr) && !dataStack.empty());
+
+    Message msg2 = Message();
+    while (!msg2.HTTPClassify(dataStackPtr) && !dataStack.empty());
+    while (!msg2.dataClassify(dataStackPtr) && !dataStack.empty());
+
+    Message msg3 = Message();
+    while (!msg3.HTTPClassify(dataStackPtr) && !dataStack.empty());
+    while (!msg3.dataClassify(dataStackPtr) && !dataStack.empty());
+    */
+    Message msg = Message();
+    msgList<Message*> list = msgList<Message*>();
+    Message* msgPtr = list.firstNode(&msg)->_elem;
+    while (!msgPtr->HTTPClassify(dataStackPtr) && !dataStack.empty());
+    while (!msgPtr->dataClassify(dataStackPtr) && !dataStack.empty());
+    /*
+    msgPtr = list.insertAsSucc(list.firstNode(&msg), &msg)->_elem;
+    while (!msgPtr->HTTPClassify(dataStackPtr) && !dataStack.empty());
+    while (!msgPtr->dataClassify(dataStackPtr) && !dataStack.empty());
+    */
     /*
     while (!dataStack.empty())                  //直到数据栈清空，处理流程就结束
     {
+        msgPtr = list.insertAsSucc(list.firstNode(&Message()), &Message())->_elem;
+        while (!msgPtr->HTTPClassify(dataStackPtr) && !dataStack.empty());
+        while (!msgPtr->dataClassify(dataStackPtr) && !dataStack.empty());
         
         if (msg.synFrame(&dataStack))
         {
@@ -39,6 +64,7 @@ int main()
             else
                 std::cout << "HTTP" << std::endl;
         }
+        
         
     }
     */

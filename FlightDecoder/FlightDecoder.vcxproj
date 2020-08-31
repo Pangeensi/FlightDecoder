@@ -146,6 +146,8 @@
     <ClInclude Include="FileLoader.h" />
     <ClInclude Include="HTTP.h" />
     <ClInclude Include="Message.h" />
+    <ClInclude Include="msgList.h" />
+    <ClInclude Include="msgListNode.h" />
     <ClInclude Include="Stack.h" />
     <ClInclude Include="TCP.h" />
     <ClInclude Include="Vector.h" />

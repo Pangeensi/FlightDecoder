@@ -24,11 +24,13 @@ int main()
     }
     dataStack.reverse();
     dataStackPtr = &dataStack;                  //指定数据指针
-
-    Message msg = Message();
+    Message msg1 = Message();
+    while (!msg1.HTTPClassify(dataStackPtr) && !dataStack.empty());
+    while (!msg1.dataClassify(dataStackPtr) && !dataStack.empty());
+    /*
     while (!dataStack.empty())                  //直到数据栈清空，处理流程就结束
     {
-        /*
+        
         if (msg.synFrame(&dataStack))
         {
             std::cout << "Syn Frame:" << dataStack.size() << std::endl;
@@ -37,9 +39,10 @@ int main()
             else
                 std::cout << "HTTP" << std::endl;
         }
-        */
-        msg.dataClassify(dataStackPtr);
+        
     }
+    */
+
     std::cout << std::endl << "end" << std::endl;
     return 0;
 }

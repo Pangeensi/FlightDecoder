@@ -16,6 +16,7 @@ private:
 	int _TCPNum = 5;														//默认TCP帧的个数
 
 	Stack<uchar> _synCache = Stack<uchar>(SYN_SIZE);						//帧同步缓存
+	Stack<uchar> _synCode = Stack<uchar>(SynCodeArray, 0, SYN_SIZE);		//帧同步栈
 	Stack<uchar> _ckWord = Stack<uchar>(ckWordArray, 0, 5);					//TCP校验栈
 	ADSB_HTTP _HTTP = ADSB_HTTP();				//HTTP帧
 	ADSB_TCP* _TCP = new ADSB_TCP[_TCPNum];		//TCP帧
@@ -26,7 +27,7 @@ public:
 	void synReload(void);			//帧同步帧重新装填函数
 	bool TCPCk(Stack<uchar>* data);	//对已捕获帧同步的帧进行TCP校验
 	void TCPCkReload(void);			//TCP校验帧帧重新装填函数
-	Stack<uchar> _synCode = Stack<uchar>(SynCodeArray, 0, SYN_SIZE);		//帧同步栈
+	void HTTPPack(void);			//将一帧HTTP帧进行封装
 };
 /*========================================
 
@@ -90,5 +91,14 @@ void Message::TCPCkReload(void)
 		_ckWord.pop();
 	for (int i = CK_SIZE - 2; i >= 0; i--)
 		_ckWord.push(ckWordArray[i]);
+}
+/*========================================
+
+HTTP帧封装函数
+
+=========================================*/
+void HTTPPack(void)
+{
+
 }
 #endif

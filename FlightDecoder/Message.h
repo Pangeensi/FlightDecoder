@@ -8,8 +8,8 @@
 #define SYN_SIZE 33		//同步帧大小
 #define CK_SIZE	 5		//TCP校验字大小
 typedef unsigned char uchar;
-uchar SynCodeArray[SYN_SIZE] = "0edd242b37edb827eb9e60c508004500";	//帧同步数据
-uchar ckWordArray[CK_SIZE] = "05dc";									//TCP帧校验字
+uchar SynCodeArray[SYN_SIZE] =	"0edd242b37edb827eb9e60c508004500";		//帧同步数据
+uchar ckWordArray[CK_SIZE] =	"05dc";									//TCP帧校验字
 class Message
 {
 private:
@@ -39,18 +39,11 @@ bool Message::synFrame(Stack<uchar>* data)
 {
 	while ((_synCode.pop() == _synCache.push(data->pop())))
 	{
-		//std::cout << _synCode.size()<<std::endl;
 		if (!_synCode.size())//只要帧同步栈清空，则说明捕捉到帧同步
 		{
 			synReload();
 			return true;
 		}
-		//printf("match data:%c syn:%c size:%d empty:%c\n", data->push(data->pop()), _synCode.push(_synCode.pop()), _synCode.size(), _synCode.empty() ? 'Y' : 'N');
-	
-		/*
-		while (!_synCache.empty())
-			data->push(_synCache.pop());		//发现不同步，数据回灌
-			*/ //错误数据暂改为丢弃
 	}
 	synReload();
 	return false;
@@ -75,7 +68,6 @@ void Message::synReload(void)
 =========================================*/
 bool Message::TCPCk(Stack<uchar>* data)
 {
-	//printf("match data:%c syn:%c size:%d empty:%c\n", data->push(data->pop()), _ckWord.push(_ckWord.pop()), _ckWord.size(), _ckWord.empty() ? 'Y' : 'N');
 	while ((_ckWord.pop() == _synCache.push(data->pop())))
 	{
 		if (!_ckWord.size())//只要帧同步栈清空，则说明捕捉到帧同步
@@ -83,10 +75,6 @@ bool Message::TCPCk(Stack<uchar>* data)
 			TCPCkReload();
 			return true;
 		}
-		/*
-		while (!_synCache.empty())
-			data->push(_synCache.pop());		//发现不同步，数据回灌
-			*/ //错误数据暂改为丢弃
 	}
 	TCPCkReload();
 	return false;

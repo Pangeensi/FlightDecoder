@@ -141,6 +141,11 @@
   <ItemGroup>
     <ClCompile Include="FlightDecoder.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Stack.h" />
+    <ClInclude Include="TCP.h" />
+    <ClInclude Include="Vector.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -123,62 +123,7 @@ bool Message::HTTPClassify(Stack<uchar>* data)
 			std::cout << std::endl << "HTTP" << std::endl;
 			return true;
 		}
-		/*
-		else								//此帧结束
-		{
-			std::cout << std::endl << "FRAME END" << std::endl;
-			return false;
-		}
-		*/
 	}
-	/*
-	else	//通过标志位分析其状态
-	{
-		if (_msgStatus == MSG_STATUS_HTTP)	//HTTP状态
-		{
-			while (!_synCache.empty())
-			{
-				_HTTP.cpDataFramePbit(&_synCache);
-				printf("x");
-				i++;
-				if (i > 3)
-				{
-					printf(" ");
-					i = 0;
-				}
-			}
-			return false;
-		}
-		else if (_msgStatus == MSG_STATUS_TCP) //TCP状态
-		{
-			while (!_synCache.empty())
-			{
-				printf("%c", _synCache.pop());
-				i++;
-				if (i > 3)
-				{
-					printf(" ");
-					i = 0;
-				}
-			}
-			return false;
-		}
-		else								//乱码
-		{
-			while (!_synCache.empty())
-			{
-				printf("%c", _synCache.pop());
-				i++;
-				if (i > 3)
-				{
-					printf(" ");
-					i = 0;
-				}
-			}
-			return false;
-		}
-	}
-	*/
 	else								//乱码
 	{
 		while (!_synCache.empty())
@@ -283,11 +228,11 @@ Message的遍历函数
 =========================================*/
 void Message::traverse(void)
 {
-	std::cout << "HTTP Traverse" << std::endl;
+	std::cout << std::endl << "HTTP Traverse" << std::endl;
 	_HTTP.traverse();
 	for (int i = 0; i < _TCPPosi; i++)
 	{
-		std::cout << "TCP Traverse" << std::endl;
+		std::cout << std::endl << "TCP Traverse" << std::endl;
 		_TCP[i].traverse();
 	}
 }

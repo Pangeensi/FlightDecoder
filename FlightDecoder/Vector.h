@@ -141,7 +141,11 @@ template<typename VST>
 void Vector<T>::traverse(const VST& visit)
 {
 	for (int i = 0; i < this->_size; i++)
+	{
 		visit(_elem[i]);
+		if ((i + 1) % 4 == 0)
+			std::cout << " ";
+	}
 }
 //向量的遍历接口
 template <typename T>
@@ -149,14 +153,13 @@ struct Traverse
 {
 	virtual void operator()(T& e) const
 	{
-		std::cout << e << " ";
+		std::cout << e;
 	}
 };
 template <typename T>
 void trav(Vector<T>* V)
 {
 	V->traverse(Traverse<T>());
-	std::cout << std::endl;
 }
 #endif
 

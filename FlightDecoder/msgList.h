@@ -7,13 +7,12 @@ template <typename T>
 class msgList
 {
 private:
-
-protected:
-	void initialize(void);			//一般列表初始化函数
-public:
 	Posi(T) header;					//头元素和尾元素
 	Posi(T) trailer;
 	int _size;						//列表的规模
+protected:
+	void initialize(void);			//一般列表初始化函数
+public:
 	msgList() { initialize(); }		//列表构造函数
 	~msgList()						//列表析构函数
 	{

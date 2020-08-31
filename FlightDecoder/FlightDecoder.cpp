@@ -20,11 +20,16 @@ int main()
         if (msg.synFrame(&dataStack))
         {
             std::cout << "Syn Frame:" << dataStack.size() << std::endl;
-            return 0;
+            if (msg.TCPCk(&dataStack))
+                std::cout << "TCP" << std::endl;
+            else
+                std::cout << "HTTP" << std::endl;
         }
-        std::cout << "Non Comp:" << dataStack.size() << std::endl;
+        /*
+        else
+            printf("data:%c syn:%c\n", dataStack.push(dataStack.pop()), msg._synCode.push(msg._synCode.pop()));
+            */
     }
     std::cout << "end" << std::endl;
     return 0;
 }
-

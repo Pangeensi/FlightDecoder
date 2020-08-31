@@ -8,7 +8,6 @@ class ADSB_TCP
 private:
 	Vector<unsigned char>	_ProData = Vector<unsigned char>();						//备用的协议数据头
 	Vector<unsigned char>	_DataFrame = Vector<unsigned char>();					//数据区
-	const unsigned char		_ckWord[2] = { 0x05,0xdc };								//TCP帧校验字
 public:
 	ADSB_TCP() {}								//TCP帧的构造函数
 	~ADSB_TCP() {}

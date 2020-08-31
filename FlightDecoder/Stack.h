@@ -67,7 +67,10 @@ inline Rank Stack<T>::size(void)
 template<typename T>
 inline bool Stack<T>::empty(void)
 {
-	return !this->_size;
+	if (size() == 0)
+		return true;
+	else
+		return false;
 }
 /*===========================================
 

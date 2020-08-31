@@ -16,8 +16,8 @@ uchar ckWordArray[CK_SIZE] =	"05dc";									//TCP帧校验字
 class Message
 {
 private:
-	int _TCPNum = 5;														//默认TCP帧的个数
-
+	int _TCPNum = 10;														//默认TCP帧的个数
+	int _TCPPosi = -1;														//当前TCP帧的位置
 	Stack<uchar> _synCache = Stack<uchar>(SYN_SIZE);						//帧同步缓存
 	Stack<uchar> _synCode = Stack<uchar>(SynCodeArray, 0, SYN_SIZE);		//帧同步栈
 	Stack<uchar> _ckWord = Stack<uchar>(ckWordArray, 0, 5);					//TCP校验栈
@@ -130,13 +130,15 @@ bool Message::HTTPClassify(Stack<uchar>* data)
 		}
 		*/
 	}
+	/*
 	else	//通过标志位分析其状态
 	{
 		if (_msgStatus == MSG_STATUS_HTTP)	//HTTP状态
 		{
 			while (!_synCache.empty())
 			{
-				printf("%c", _synCache.pop());
+				_HTTP.cpDataFramePbit(&_synCache);
+				printf("x");
 				i++;
 				if (i > 3)
 				{
@@ -175,6 +177,21 @@ bool Message::HTTPClassify(Stack<uchar>* data)
 			return false;
 		}
 	}
+	*/
+	else								//乱码
+	{
+		while (!_synCache.empty())
+		{
+			printf("%c", _synCache.pop());
+			i++;
+			if (i > 3)
+			{
+				printf(" ");
+				i = 0;
+			}
+		}
+		return false;
+	}
 }
 /*========================================
 
@@ -190,6 +207,7 @@ bool Message::dataClassify(Stack<uchar>* data)	//数据分类函数
 		{
 			//获取协议帧
 			std::cout << std::endl << "TCP" << std::endl;
+			_TCPPosi++;		//捕获新的TCP，位置自增
 			return false;
 		}
 		else					//HTTP状态或此帧结束
@@ -214,7 +232,8 @@ bool Message::dataClassify(Stack<uchar>* data)	//数据分类函数
 		{
 			while (!_synCache.empty())
 			{
-				printf("%c", _synCache.pop());
+				_HTTP.cpDataFramePbit(&_synCache);
+				printf("x");
 				i++;
 				if (i > 3)
 				{
@@ -228,7 +247,8 @@ bool Message::dataClassify(Stack<uchar>* data)	//数据分类函数
 		{
 			while (!_synCache.empty())
 			{
-				printf("%c", _synCache.pop());
+				_TCP[_TCPPosi].cpDataFramePbit(&_synCache);
+				printf("%d", _TCPPosi);
 				i++;
 				if (i > 3)
 				{

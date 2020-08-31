@@ -9,6 +9,7 @@ class ADSB_HTTP
 private:
 	Vector<uchar>	_ProData = Vector<uchar>();						//备用的协议数据头
 	Vector<uchar>	_DataFrame = Vector<uchar>();					//数据区
+	int _httpSize = 0;												//HTTP帧的规模
 protected:
 	void copyFrom(Stack<uchar>*, int,Vector<uchar>*);			//批量封装函数
 public:
@@ -16,6 +17,7 @@ public:
 	~ADSB_HTTP() {}
 	void cpProData(Stack<uchar>*);								//备用协议封装函数
 	void cpDataFrame(Stack<uchar>* data, int r);				//数据封装函数
+	void cpDataFramePbit(Stack<uchar>* data);					//逐位数据封装函数
 };
 /*========================================
 
@@ -47,5 +49,15 @@ void ADSB_HTTP::cpProData(Stack<uchar>* data)
 void ADSB_HTTP::cpDataFrame(Stack<uchar>* data, int r)
 {
 	_DataFrame.insert(data->pop(), r);
+}
+/*========================================
+
+逐比特将HTTP帧的备用协议部分封装在数据区中
+输入：数据栈
+
+=========================================*/
+void ADSB_HTTP::cpDataFramePbit(Stack<uchar>* data)
+{
+	_DataFrame.insert(data->pop(), _httpSize++);
 }
 #endif

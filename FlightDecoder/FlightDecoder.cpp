@@ -27,24 +27,7 @@ int main()
     }
     dataStack.reverse();
     dataStackPtr = &dataStack;                  //指定数据指针
-    /*
-    Message msg1 = Message();
-    while (!msg1.HTTPClassify(dataStackPtr) && !dataStack.empty());
-    while (!msg1.dataClassify(dataStackPtr) && !dataStack.empty());
 
-    Message msg2 = Message();
-    while (!msg2.HTTPClassify(dataStackPtr) && !dataStack.empty());
-    while (!msg2.dataClassify(dataStackPtr) && !dataStack.empty());
-
-    Message msg3 = Message();
-    while (!msg3.HTTPClassify(dataStackPtr) && !dataStack.empty());
-    while (!msg3.dataClassify(dataStackPtr) && !dataStack.empty());
-    */
-    /*
-    msgPtr = list.insertAsSucc(list.firstNode(&msg), &msg)->_elem;
-    while (!msgPtr->HTTPClassify(dataStackPtr) && !dataStack.empty());
-    while (!msgPtr->dataClassify(dataStackPtr) && !dataStack.empty());
-    */
     Message msgFirst = Message();                               //Message缓存
     msgList<Message*> list = msgList<Message*>();               //Message列表初始化
     Posi(Message*) msgNodePtr = list.firstNode(&msgFirst);      //首节点

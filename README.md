@@ -7,6 +7,8 @@
 
 样本文件路径路径：D:/FlightAwareData/sample
 
+欢迎点小星星星星星星
+
 ### 运行环境：Visual Studio 2019及其以上。
 
 以下为开发版本说明:

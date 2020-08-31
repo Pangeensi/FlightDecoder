@@ -7,6 +7,9 @@
 #define _MESSAGE_H_
 #define SYN_SIZE 33		//同步帧大小
 #define CK_SIZE	 5		//TCP校验字大小
+#define MSG_STATUS_SEARCH	0x01
+#define MSG_STATUS_HTTP		0x02
+#define MSG_STATUS_TCP		0x03
 typedef unsigned char uchar;
 uchar SynCodeArray[SYN_SIZE] =	"0edd242b37edb827eb9e60c508004500";		//帧同步数据
 uchar ckWordArray[CK_SIZE] =	"05dc";									//TCP帧校验字
@@ -20,6 +23,8 @@ private:
 	Stack<uchar> _ckWord = Stack<uchar>(ckWordArray, 0, 5);					//TCP校验栈
 	ADSB_HTTP _HTTP = ADSB_HTTP();				//HTTP帧
 	ADSB_TCP* _TCP = new ADSB_TCP[_TCPNum];		//TCP帧
+	uchar	_msgStatus = MSG_STATUS_SEARCH;									//帧标志位
+	int i = 0;
 public:
 	Message() {}					//Message类的构造函数
 	~Message() { delete[] _TCP; }	//Message类的析构函数
@@ -27,7 +32,8 @@ public:
 	void synReload(void);			//帧同步帧重新装填函数
 	bool TCPCk(Stack<uchar>* data);	//对已捕获帧同步的帧进行TCP校验
 	void TCPCkReload(void);			//TCP校验帧帧重新装填函数
-	void HTTPPack(void);			//将一帧HTTP帧进行封装
+	void dataClassify(Stack<uchar>* data);	//数据分类函数
+	void HTTPPack(Stack<uchar>* data);		//将一帧HTTP帧进行封装
 };
 /*========================================
 
@@ -43,10 +49,13 @@ bool Message::synFrame(Stack<uchar>* data)
 		if (!_synCode.size())//只要帧同步栈清空，则说明捕捉到帧同步
 		{
 			synReload();
+			_msgStatus = MSG_STATUS_HTTP;	//帧同步成功，从搜寻状态变为HTTP状态
+			while (!_synCache.empty())
+				_synCache.pop();			//缓存中为帧同步或乱码，丢弃
 			return true;
 		}
 	}
-	synReload();
+	synReload();							//不是帧同步，数据为乱码或信息
 	return false;
 }
 /*========================================
@@ -74,10 +83,14 @@ bool Message::TCPCk(Stack<uchar>* data)
 		if (!_ckWord.size())//只要帧同步栈清空，则说明捕捉到帧同步
 		{
 			TCPCkReload();
+			_msgStatus = MSG_STATUS_TCP;
+			while (!_synCache.empty())
+				_synCache.pop();			//缓存中为校验或乱码，丢弃
 			return true;
 		}
 	}
-	TCPCkReload();
+	TCPCkReload();							//不是校验，此帧结束
+	_msgStatus = MSG_STATUS_SEARCH;
 	return false;
 }
 /*========================================
@@ -95,10 +108,84 @@ void Message::TCPCkReload(void)
 /*========================================
 
 HTTP帧封装函数
+输入：数据栈
 
 =========================================*/
-void HTTPPack(void)
+void Message::HTTPPack(Stack<uchar>* data)
 {
+
+}
+/*========================================
+
+将数据进行同步、缓存、查询状态，调用指定端口
+输入：数据栈
+
+=========================================*/
+void Message::dataClassify(Stack<uchar>* data)	//数据分类函数
+{
+	if(synFrame(data))
+		if (TCPCk(data))		//TCP状态无数据
+		{
+			//获取协议帧
+			std::cout << std::endl << "TCP" << std::endl;
+		}
+		else					//HTTP状态或此帧结束
+		{
+			if (_msgStatus == MSG_STATUS_HTTP)	//HTTP状态无数据
+			{
+				//获取帧协议
+				std::cout << std::endl << "HTTP" << std::endl;
+			}
+			else								//此帧结束
+			{
+				std::cout << std::endl << "HTTP" << std::endl;
+			}
+		}
+	else	//通过标志位分析其状态
+	{
+		if (_msgStatus == MSG_STATUS_HTTP)	//HTTP状态
+		{
+			while (!_synCache.empty())
+			{
+				printf("%c", _synCache.pop());
+				i++;
+				if (i > 3)
+				{
+					printf(" ");
+					i = 0;
+				}
+				
+			}
+		}
+		else if (_msgStatus == MSG_STATUS_TCP) //TCP状态
+		{
+			while (!_synCache.empty())
+			{
+				printf("%c", _synCache.pop());
+				i++;
+				if (i > 3)
+				{
+					printf(" ");
+					i = 0;
+				}
+				
+			}
+		}
+		else								//乱码
+		{
+			while (!_synCache.empty())
+			{
+				printf("%c", _synCache.pop());
+				i++;
+				if (i > 3)
+				{
+					printf(" ");
+					i = 0;
+				}
+
+			}
+		}
+	}
 
 }
 #endif

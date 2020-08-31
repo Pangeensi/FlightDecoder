@@ -1,4 +1,4 @@
-﻿// FlightDcoder.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
+﻿// FlightDecoder.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
 //
 
 #include <iostream>
@@ -28,6 +28,7 @@ int main()
     Message msg = Message();
     while (!dataStack.empty())                  //直到数据栈清空，处理流程就结束
     {
+        /*
         if (msg.synFrame(&dataStack))
         {
             std::cout << "Syn Frame:" << dataStack.size() << std::endl;
@@ -36,7 +37,9 @@ int main()
             else
                 std::cout << "HTTP" << std::endl;
         }
+        */
+        msg.dataClassify(dataStackPtr);
     }
-    std::cout << "end" << std::endl;
+    std::cout << std::endl << "end" << std::endl;
     return 0;
 }

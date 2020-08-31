@@ -5,6 +5,7 @@
 #include "FileLoader.h"
 #include "Stack.h"
 #include "Message.h"
+#include "msgListNode.h"
 #include "msgList.h"
 #define DEFAULT_MESSAGE 10
 typedef unsigned char uchar;
@@ -39,35 +40,25 @@ int main()
     while (!msg3.HTTPClassify(dataStackPtr) && !dataStack.empty());
     while (!msg3.dataClassify(dataStackPtr) && !dataStack.empty());
     */
-    Message msg = Message();
-    msgList<Message*> list = msgList<Message*>();
-    Message* msgPtr = list.firstNode(&msg)->_elem;
-    while (!msgPtr->HTTPClassify(dataStackPtr) && !dataStack.empty());
-    while (!msgPtr->dataClassify(dataStackPtr) && !dataStack.empty());
     /*
     msgPtr = list.insertAsSucc(list.firstNode(&msg), &msg)->_elem;
     while (!msgPtr->HTTPClassify(dataStackPtr) && !dataStack.empty());
     while (!msgPtr->dataClassify(dataStackPtr) && !dataStack.empty());
     */
-    /*
+    Message msgFirst = Message();                               //Message缓存
+    msgList<Message*> list = msgList<Message*>();               //Message列表初始化
+    Posi(Message*) msgNodePtr = list.firstNode(&msgFirst);      //首节点
+    Message* msgPtr = msgNodePtr->_elem;                        //首节点元素
+    while (!msgPtr->HTTPClassify(dataStackPtr) && !dataStack.empty());
+    while (!msgPtr->dataClassify(dataStackPtr) && !dataStack.empty());
     while (!dataStack.empty())                  //直到数据栈清空，处理流程就结束
     {
-        msgPtr = list.insertAsSucc(list.firstNode(&Message()), &Message())->_elem;
+        Message msg = Message();
+        msgNodePtr = list.insertAsPred(msgNodePtr, &msg);
+        msgPtr = msgNodePtr->_elem;
         while (!msgPtr->HTTPClassify(dataStackPtr) && !dataStack.empty());
         while (!msgPtr->dataClassify(dataStackPtr) && !dataStack.empty());
-        
-        if (msg.synFrame(&dataStack))
-        {
-            std::cout << "Syn Frame:" << dataStack.size() << std::endl;
-            if (msg.TCPCk(&dataStack))
-                std::cout << "TCP" << std::endl;
-            else
-                std::cout << "HTTP" << std::endl;
-        }
-        
-        
     }
-    */
 
     std::cout << std::endl << "end" << std::endl;
     return 0;

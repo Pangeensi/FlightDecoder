@@ -1,4 +1,4 @@
-# FlightDecode
+# FlightDecoder
 基于FlightAware和WireShare的ADS-B本地解码项目。
 
 程序通过提取指定样本文件获取数据，然后完成对数据的解码保存等工作。

@@ -7,8 +7,6 @@ typedef int Rank;
 template <typename T>
 class Stack :protected Vector<T>
 {
-protected:
-	void reverse(void);					//栈翻转操作
 public:
 	//栈的构造
 	Stack(Rank c = DEFAULT_CAPACITY)	//空构造，栈内部没有默认元素
@@ -31,6 +29,7 @@ public:
 	T pop(void);			//出栈操作
 	T& top(void);			//返回栈顶元素
 	//栈的批量操作
+	void reverse(void);					//栈翻转操作
 };
 #endif
 /*===========================================
@@ -67,10 +66,7 @@ inline Rank Stack<T>::size(void)
 template<typename T>
 inline bool Stack<T>::empty(void)
 {
-	if (size() == 0)
-		return true;
-	else
-		return false;
+	return !this->_size;
 }
 /*===========================================
 

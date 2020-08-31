@@ -18,6 +18,7 @@ public:
 	void cpProData(Stack<uchar>*);								//备用协议封装函数
 	void cpDataFrame(Stack<uchar>* data, int r);				//数据封装函数
 	void cpDataFramePbit(Stack<uchar>* data);					//逐位数据封装函数
+	void traverse(void);										//HTTP遍历函数
 };
 /*========================================
 
@@ -59,5 +60,14 @@ void ADSB_HTTP::cpDataFrame(Stack<uchar>* data, int r)
 void ADSB_HTTP::cpDataFramePbit(Stack<uchar>* data)
 {
 	_DataFrame.insert(data->pop(), _httpSize++);
+}
+/*========================================
+
+HTTP的遍历函数
+
+=========================================*/
+void ADSB_HTTP::traverse(void)
+{
+	trav(&_DataFrame);
 }
 #endif

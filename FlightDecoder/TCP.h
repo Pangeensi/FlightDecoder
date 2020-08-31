@@ -17,6 +17,7 @@ public:
 	void cpProData(Stack<uchar>*);								//备用协议封装函数
 	void cpDataFrame(Stack<uchar>* data, int r);				//数据封装函数
 	void cpDataFramePbit(Stack<uchar>* data);					//逐位数据封装函数
+	void traverse(void);										//TCP遍历函数
 };
 /*========================================
 
@@ -58,5 +59,14 @@ void ADSB_TCP::cpDataFrame(Stack<uchar>* data, int r)
 void ADSB_TCP::cpDataFramePbit(Stack<uchar>* data)
 {
 	_DataFrame.insert(data->pop(), _tcpSize++);
+}
+/*========================================
+
+TCP的遍历函数
+
+=========================================*/
+void ADSB_TCP::traverse(void)
+{
+	trav(&_DataFrame);
 }
 #endif

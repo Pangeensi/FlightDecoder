@@ -34,6 +34,7 @@ public:
 	void TCPCkReload(void);			//TCP校验帧帧重新装填函数
 	bool HTTPClassify(Stack<uchar>* data);	//仅含HTTP的数据分类函数
 	bool dataClassify(Stack<uchar>* data);	//数据分类函数
+	void traverse(void);					//Message的遍历函数
 };
 /*========================================
 
@@ -274,5 +275,20 @@ bool Message::dataClassify(Stack<uchar>* data)	//数据分类函数
 		}
 	}
 
+}
+/*========================================
+
+Message的遍历函数
+
+=========================================*/
+void Message::traverse(void)
+{
+	std::cout << "HTTP Traverse" << std::endl;
+	_HTTP.traverse();
+	for (int i = 0; i < _TCPPosi; i++)
+	{
+		std::cout << "TCP Traverse" << std::endl;
+		_TCP[i].traverse();
+	}
 }
 #endif

@@ -18,6 +18,8 @@ public:
 	T remove(Rank r);					//单独删除元素
 	Rank size(void);					//获取向量的规模
 	bool empty(void);					//判断向量是否为空
+	template <typename VST>
+	void traverse(const VST& visit);	//向量遍历
 	Vector(Rank c = DEFAULT_CAPACITY)	//空构造，向量内部没有默认元素
 	{
 		_elem = new T[_capacity = c];
@@ -108,7 +110,7 @@ inline T Vector<T>::remove(Rank r)
 }
 /*===========================================
 
-获取栈的规模
+获取向量的规模
 返回值：当前栈当中存储的元素个数
 
 ============================================*/
@@ -119,7 +121,7 @@ inline Rank Vector<T>::size(void)
 }
 /*===========================================
 
-获取栈是否为空的信息
+获取向量是否为空的信息
 返回值：栈为空则返回true，否则返回false
 
 ============================================*/
@@ -128,4 +130,34 @@ inline bool Vector<T>::empty(void)
 {
 	return !this->_size;
 }
+/*===========================================
+
+向量遍历，不能被其他抽象数据类型所继承
+输入值：访问构造
+
+============================================*/
+template<typename T>
+template<typename VST>
+void Vector<T>::traverse(const VST& visit)
+{
+	for (int i = 0; i < this->_size; i++)
+		visit(_elem[i]);
+}
+//向量的遍历接口
+template <typename T>
+struct Traverse
+{
+	virtual void operator()(T& e) const
+	{
+		std::cout << e << " ";
+	}
+};
+template <typename T>
+void trav(Vector<T>* V)
+{
+	V->traverse(Traverse<T>());
+	std::cout << std::endl;
+}
 #endif
+
+

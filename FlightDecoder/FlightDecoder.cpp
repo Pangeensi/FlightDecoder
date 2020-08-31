@@ -9,6 +9,7 @@
 #include "msgList.h"
 #define DEFAULT_MESSAGE 10
 typedef unsigned char uchar;
+
 int main()
 {
     const char* filePath = "D:/FlightAwareData/sample";
@@ -27,13 +28,15 @@ int main()
     }
     dataStack.reverse();
     dataStackPtr = &dataStack;                  //指定数据指针
-
+    
+    //数据存储
     Message msgFirst = Message();                               //Message缓存
     msgList<Message*> list = msgList<Message*>();               //Message列表初始化
     Posi(Message*) msgNodePtr = list.firstNode(&msgFirst);      //首节点
     Message* msgPtr = msgNodePtr->_elem;                        //首节点元素
     while (!msgPtr->HTTPClassify(dataStackPtr) && !dataStack.empty());
     while (!msgPtr->dataClassify(dataStackPtr) && !dataStack.empty());
+    /*
     while (!dataStack.empty())                  //直到数据栈清空，处理流程就结束
     {
         Message msg = Message();
@@ -42,7 +45,18 @@ int main()
         while (!msgPtr->HTTPClassify(dataStackPtr) && !dataStack.empty());
         while (!msgPtr->dataClassify(dataStackPtr) && !dataStack.empty());
     }
-
+    */
+    //数据读取
+    int msgSeq = 0;                             //数据列表中正在处理Message的位置
+    msgNodePtr = list.firstNode(&msgFirst);     //重新定位到首节点
+    msgPtr = msgNodePtr->_elem;
+    while (msgSeq < list.size())
+    {
+        msgPtr->traverse();
+        msgNodePtr = msgNodePtr->succ;
+        msgPtr = msgNodePtr->_elem;
+        msgSeq++;
+    }
     std::cout << std::endl << "end" << std::endl;
     return 0;
 }

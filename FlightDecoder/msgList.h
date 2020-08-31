@@ -27,6 +27,8 @@ public:
 	Posi(T) insertAsPred(Posi(T) p, T const& e);	//作为前驱插入元素
 	Posi(T) insertAsSucc(Posi(T) p, T const& e);	//作为后继插入元素
 	Posi(T) firstNode(T const& e);					//获取列表首节点位置
+	bool empty(void);								//返回列表是否为空
+	Rank size(void);								//获取列表的规模
 };
 /*============================================
 
@@ -54,6 +56,7 @@ void msgList<T>::initialize()
 template<typename T>
 Posi(T) msgList<T>::insertAsPred(Posi(T) p, T const& e)
 {
+	_size++;
 	return p->insertAsPred(e);
 }
 /*============================================
@@ -66,6 +69,7 @@ Posi(T) msgList<T>::insertAsPred(Posi(T) p, T const& e)
 template<typename T>
 Posi(T) msgList<T>::insertAsSucc(Posi(T) p, T const& e)
 {
+	_size++;
 	return p->insertAsSucc(e);
 }
 /*============================================
@@ -82,5 +86,27 @@ Posi(T) msgList<T>::firstNode(T const& e)
 		return insertAsSucc(header, e);
 	else
 		return header->succ;
+}
+/*============================================
+
+返回列表是否为空
+输出值：列表为空与否的标志位
+
+=============================================*/
+template<typename T>
+inline bool msgList<T>::empty(void)
+{
+	return !_size;
+}
+/*===========================================
+
+获取向量的规模
+返回值：当前栈当中存储的元素个数
+
+============================================*/
+template<typename T>
+inline Rank msgList<T>::size(void)
+{
+	return this->_size;
 }
 #endif

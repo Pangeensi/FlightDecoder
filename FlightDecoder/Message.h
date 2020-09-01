@@ -16,8 +16,8 @@ uchar ckWordArray[CK_SIZE] =	"05dc";									//TCP帧校验字
 class Message
 {
 private:
-	int _TCPNum = 10;														//默认TCP帧的个数
-	int _TCPPosi = -1;														//当前TCP帧的位置
+	int _TCPNum = 10;														//默认TCP帧的容量
+	int _TCPPosi = -1;														//TCP帧的规模
 	Stack<uchar> _synCache = Stack<uchar>(SYN_SIZE);						//帧同步缓存
 	Stack<uchar> _synCode = Stack<uchar>(SynCodeArray, 0, SYN_SIZE);		//帧同步栈
 	Stack<uchar> _ckWord = Stack<uchar>(ckWordArray, 0, 5);					//TCP校验栈

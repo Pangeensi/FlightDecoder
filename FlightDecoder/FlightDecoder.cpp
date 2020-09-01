@@ -12,7 +12,7 @@ typedef unsigned char uchar;
 
 int main()
 {
-    const char* filePath = "D:/FlightAwareData/SampleGroup/sample689";
+    const char* filePath = "D:/FlightAwareData/SampleGroup/sample1660";
     int size = fileSize(filePath);          //获取文件数据量
     uchar* dataArray = new uchar[size];
     fileLoad(dataArray, filePath, size);    //将文件数据存储为数组
@@ -39,7 +39,7 @@ int main()
     while (!dataStack.empty())                  //直到数据栈清空，处理流程就结束
     {
         msgPtr = new Message();
-        msgNodePtr = list.insertAsPred(msgNodePtr, msgPtr);
+        msgNodePtr = list.insertAsSucc(msgNodePtr, msgPtr);
         while (!msgPtr->HTTPClassify(dataStackPtr) && !dataStack.empty());
         while (!msgPtr->dataClassify(dataStackPtr) && !dataStack.empty());
     }

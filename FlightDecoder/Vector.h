@@ -2,6 +2,7 @@
 #ifndef _VECTOR_H_
 #define _VECTOR_H_
 #define DEFAULT_CAPACITY 10
+#include "ASCII.h"
 typedef int Rank;
 template <typename T>
 class Vector
@@ -143,17 +144,32 @@ void Vector<T>::traverse(const VST& visit)
 	for (int i = 0; i < this->_size; i++)
 	{
 		visit(_elem[i]);
+		/*
 		if ((i + 1) % 4 == 0)
 			std::cout << " ";
+			*/
 	}
 }
+int asciiNum = 0;
+int asciiBuff;
 //向量的遍历接口
 template <typename T>
 struct Traverse
 {
 	virtual void operator()(T& e) const
 	{
-		std::cout << e;
+		//std::cout << e;
+		if (e >= 48 && e <= 57)
+			e = e - 48;
+		else if (e >= 97 && e <= 102)
+			e = e - 97 + 10;
+		if (asciiNum == 0)
+			asciiBuff = e;
+		else if (asciiNum == 1)
+			printf("%c", ASCII[asciiBuff][e]);
+		asciiNum++;
+		if (asciiNum == 2)
+			asciiNum = 0;
 	}
 };
 template <typename T>

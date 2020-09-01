@@ -7,9 +7,9 @@
 #include "Message.h"
 #include "msgListNode.h"
 #include "msgList.h"
+#include "ASCII.h"
 #define DEFAULT_MESSAGE 10
 typedef unsigned char uchar;
-
 int main()
 {
     const char* filePath = "D:/FlightAwareData/SampleGroup/sample1660";

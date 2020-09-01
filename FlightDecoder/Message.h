@@ -179,7 +179,6 @@ bool Message::dataClassify(Stack<uchar>* data)	//数据分类函数
 			while (!_synCache.empty())
 			{
 				_HTTP.cpDataFramePbit(&_synCache);
-				printf("x");
 				i++;
 				if (i > 3)
 				{
@@ -194,7 +193,7 @@ bool Message::dataClassify(Stack<uchar>* data)	//数据分类函数
 			while (!_synCache.empty())
 			{
 				_TCP[_TCPPosi].cpDataFramePbit(&_synCache);
-				printf("%d", _TCPPosi);
+				//printf("%d", _TCPPosi);
 				i++;
 				if (i > 3)
 				{
@@ -230,7 +229,7 @@ void Message::traverse(void)
 {
 	std::cout << std::endl << "HTTP Traverse" << std::endl;
 	_HTTP.traverse();
-	for (int i = 0; i < _TCPPosi; i++)
+	for (int i = 0; i < _TCPPosi + 1; i++)
 	{
 		std::cout << std::endl << "TCP Traverse" << std::endl;
 		_TCP[i].traverse();

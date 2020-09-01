@@ -59,7 +59,9 @@ void ADSB_HTTP::cpDataFrame(Stack<uchar>* data, int r)
 =========================================*/
 void ADSB_HTTP::cpDataFramePbit(Stack<uchar>* data)
 {
-	_DataFrame.insert(data->pop(), _httpSize++);
+	uchar dispCache = data->pop();
+	printf("%c", dispCache);
+	_DataFrame.insert(dispCache, _httpSize++);
 }
 /*========================================
 

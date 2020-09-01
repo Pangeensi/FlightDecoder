@@ -58,7 +58,9 @@ void ADSB_TCP::cpDataFrame(Stack<uchar>* data, int r)
 =========================================*/
 void ADSB_TCP::cpDataFramePbit(Stack<uchar>* data)
 {
-	_DataFrame.insert(data->pop(), _tcpSize++);
+	uchar dispCache = data->pop();
+	printf("%c", dispCache);
+	_DataFrame.insert(dispCache, _tcpSize++);
 }
 /*========================================
 

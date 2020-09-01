@@ -12,7 +12,7 @@ typedef unsigned char uchar;
 
 int main()
 {
-    const char* filePath = "D:/FlightAwareData/sample";
+    const char* filePath = "D:/FlightAwareData/SampleGroup/sample689";
     int size = fileSize(filePath);          //获取文件数据量
     uchar* dataArray = new uchar[size];
     fileLoad(dataArray, filePath, size);    //将文件数据存储为数组

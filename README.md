@@ -5,7 +5,7 @@
 
 样本同工程仓库一并保存，在使用时需要单独提取并保存在指定路径。
 
-样本文件路径路径：D:/FlightAwareData/SampleGroup/sample689
+样本文件路径路径：D:/FlightAwareData/SampleGroup/sample1660
 
 欢迎点小:star::star:
 

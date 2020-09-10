@@ -4,23 +4,29 @@
 #include "TCP.h"
 #include "Stack.h"
 #ifndef _MESSAGE_H_
-#define _MESSAGE_H_
+#define _MESSAGE_H_SynCodeArray
 #define SYN_SIZE 33		//同步帧大小
 #define CK_SIZE	 5		//TCP校验字大小
-#define MSG_STATUS_SEARCH	0x01
-#define MSG_STATUS_HTTP		0x02
-#define MSG_STATUS_TCP		0x03
+#define HTTP_PTSYN	17	//HTTP帧协议区帧结尾码大小
+#define TCP_PTSYN	17	//TCP帧协议期帧结尾码大小
+#define MSG_STATUS_SEARCH	0x01	//搜索状态标志位，表示当前读到的数据为乱码
+#define MSG_STATUS_HTTP		0x02	//HTTP状态标志位，表示当前读到的数据为HTTP帧的数据或负载
+#define MSG_STATUS_TCP		0x03	//TCP状态标志位，表示当前读到的数据为TCP帧的数据或负载
 typedef unsigned char uchar;
-uchar SynCodeArray[SYN_SIZE] =	"0edd242b37edb827eb9e60c508004500";		//帧同步数据
-uchar ckWordArray[CK_SIZE] =	"05dc";									//TCP帧校验字
+uchar frameBlockSynCodeArray[SYN_SIZE] = "0edd242b37edb827eb9e60c508004500";	//帧块同步数据
+uchar tcpCkSynCodeArray[CK_SIZE] = "05dc";										//TCP帧校验字数据
+uchar httpFinSynCodeArray[HTTP_PTSYN] = "50180ff5xxxx0000";						//HTTP帧协议区帧结尾码
+uchar tcpFinSynCodeArray[TCP_PTSYN] = "50100ff5xxxx0000";						//TCP帧协议区帧结尾码
 class Message
 {
 private:
-	int _TCPNum = 10;														//默认TCP帧的容量
-	int _TCPPosi = -1;														//TCP帧的规模
-	Stack<uchar> _synCache = Stack<uchar>(SYN_SIZE);						//帧同步缓存
-	Stack<uchar> _synCode = Stack<uchar>(SynCodeArray, 0, SYN_SIZE);		//帧同步栈
-	Stack<uchar> _ckWord = Stack<uchar>(ckWordArray, 0, 5);					//TCP校验栈
+	int _TCPNum = 10;																//默认TCP帧的容量
+	int _TCPPosi = -1;																//TCP帧的规模
+	Stack<uchar> _synCache = Stack<uchar>(SYN_SIZE);								//各类帧同步缓存
+	Stack<uchar> _frameBlockSynCode = Stack<uchar>(frameBlockSynCodeArray, 0, SYN_SIZE);	//帧块同步校验栈
+	Stack<uchar> _tcpCkSynCode = Stack<uchar>(tcpCkSynCodeArray, 0, 5);						//TCP校验栈
+	Stack<uchar> _httpFinSynCode = Stack<uchar>(httpFinSynCodeArray, 0, HTTP_PTSYN);		//HTTP帧协议区帧结尾识别栈
+	Stack<uchar> _tcpFinSynCode = Stack<uchar>(tcpFinSynCodeArray, 0, TCP_PTSYN);			//TCP帧协议区帧结尾识别栈
 	ADSB_HTTP _HTTP = ADSB_HTTP();				//HTTP帧
 	ADSB_TCP* _TCP = new ADSB_TCP[_TCPNum];		//TCP帧
 	uchar	_msgStatus = MSG_STATUS_SEARCH;									//帧标志位
@@ -30,17 +36,23 @@ protected:
 	void frameReload(Stack<uchar>*, int, uchar*);								//数据帧重新装填函数
 	bool frameSyn(Stack<uchar>*, Stack<uchar>*, uchar, void (Message::*) ());	//数据帧同步函数
 	//Message块帧的重新装填和同步
-	void frameBlocReload(void);				//帧块同步重新装填函数
+	void frameBlockReload(void);			//帧块同步重新装填函数
 	bool frameBlockSyn(Stack<uchar>*);		//每个Message中的帧块同步函数
 	//TCP校验字的重新装填和同步
 	void tcpCkReload(void);					//TCP校验帧帧重新装填函数
 	bool tcpCkSyn(Stack<uchar>*);			//对已捕获帧同步的帧进行TCP校验
+	//TCP帧中帧结尾码的重新装填和同步
+	void tcpFinReload(void);				//TCP帧中帧结尾码的重新装填函数
+	bool tcpFinSyn(Stack<uchar>*);			//TCP帧中帧结尾码的结尾捕捉函数
+	//HTTP帧中帧结尾码的重新装填和同步
+	void httpFinReload(void);				//HTTP帧中帧结尾码的重新装填函数
+	bool httpFinSyn(Stack<uchar>*);			//HTTP帧中帧结尾码的结尾捕捉函数
 public:
-	Message() { frameBlocReload(); tcpCkReload(); }	//Message类的构造函数
-	~Message() { delete[] _TCP; }					//Message类的析构函数
-	bool HTTPClassify(Stack<uchar>*);				//仅含HTTP的数据分类函数
-	bool dataClassify(Stack<uchar>*);				//数据分类函数
-	void traverse(void);							//Message的遍历函数
+	Message() { frameBlockReload(); tcpCkReload(); }	//Message类的构造函数
+	~Message() { delete[] _TCP; }						//Message类的析构函数
+	bool HTTPClassify(Stack<uchar>*);					//仅含HTTP的数据分类函数
+	bool dataClassify(Stack<uchar>*);					//数据分类函数
+	void traverse(void);								//Message的遍历函数
 };
 /*========================================
 
@@ -61,7 +73,7 @@ void Message::frameReload(Stack<uchar>* data,int dataSize,uchar* codeArray)
 输入：数据栈，指定的数据帧，捕获成功后Message的状态，重新装填函数
 输出：在数据栈结束前是否捕捉到帧同步
 
-注：目前不可用
+注：此函数目前不可用
 
 =========================================*/
 bool  Message::frameSyn(Stack<uchar>* data, Stack<uchar>* synCode, uchar status, void(Message::* reload)())	//数据帧同步函数
@@ -90,30 +102,30 @@ bool  Message::frameSyn(Stack<uchar>* data, Stack<uchar>* synCode, uchar status,
 bool Message::frameBlockSyn(Stack<uchar>* data)
 {
 	
-	while ((_synCode.pop() == _synCache.push(data->pop())))
+	while ((_frameBlockSynCode.pop() == _synCache.push(data->pop())))
 	{
-		if (!_synCode.size())//只要帧同步栈清空，则说明捕捉到帧同步
+		if (!_frameBlockSynCode.size())//只要帧同步栈清空，则说明捕捉到帧同步
 		{
-			frameBlocReload();
+			frameBlockReload();
 			_msgStatus = MSG_STATUS_HTTP;	//帧同步成功，从搜寻状态变为HTTP状态
 			//while (!_synCache.empty())
 				//_synCache.pop();			//缓存中为帧同步或乱码，丢弃
 			return true;
 		}
 	}
-	frameBlocReload();						//不是帧同步，数据为乱码或信息
+	frameBlockReload();						//不是帧同步，数据为乱码或信息
 	return false;
 	
-	//return frameSyn(data, &_synCode, MSG_STATUS_HTTP, &Message::frameBlocReload);
+	//return frameSyn(data, &_frameBlockSynCode, MSG_STATUS_HTTP, &Message::frameBlockReload);
 }
 /*========================================
 
 整个Message中的帧块同步码重新装填函数
 
 =========================================*/
-void Message::frameBlocReload(void)
+void Message::frameBlockReload(void)
 {
-	frameReload(&_synCode, SYN_SIZE, SynCodeArray);
+	frameReload(&_frameBlockSynCode, SYN_SIZE, frameBlockSynCodeArray);
 }
 /*========================================
 
@@ -123,9 +135,9 @@ void Message::frameBlocReload(void)
 =========================================*/
 bool Message::tcpCkSyn(Stack<uchar>* data)
 {
-	while ((_ckWord.pop() == _synCache.push(data->pop())))
+	while ((_tcpCkSynCode.pop() == _synCache.push(data->pop())))
 	{
-		if (!_ckWord.size())//只要帧同步栈清空，则说明捕捉到帧同步
+		if (!_tcpCkSynCode.size())//只要帧同步栈清空，则说明捕捉到帧同步
 		{
 			tcpCkReload();
 			_msgStatus = MSG_STATUS_TCP;
@@ -145,7 +157,7 @@ TCP校验帧重新装填函数
 =========================================*/
 void Message::tcpCkReload(void)
 {
-	frameReload(&_ckWord, CK_SIZE, ckWordArray);
+	frameReload(&_tcpCkSynCode, CK_SIZE, tcpCkSynCodeArray);
 }
 /*========================================
 
